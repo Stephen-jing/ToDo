@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+        <div id="todo-app">
+                <div>
+                  <input type="button" value="全部标为完成" @click="markAllAsCompleted"/>
+                  <input type="text" placeholder="添加 todo" v-model="newTodoTitle" @keyup.enter="addTodo"/>
+                </div>
+                <!-- todo list -->
+                <ul>
+                  <todo-item v-for="todo in filteredTodos" :todo="todo" :key="todo.id" @remove-todo="removeTodo"/>
+                </ul>
+                <!-- end todo list -->
+                <div>
+                  <span>剩余 {{leftTodosCount}} 项未完成 ---</span>
+                  <span>筛选：
+                    <input type="button" class="selected" value="全部" @click="intention='all'"/>
+                    <input type="button" value="进行中" @click="intention='ongoing'"/>
+                    <input type="button" value="已完成" @click="intention='completed'"/>
+                    <input type="button" value="清除已完成" @click="clearCompleted"/>
+                    <input type="button" value="清除全部" @click="clearAll"/>
+                  </span>
+                </div>
+              </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script type="text/x-template" id="todo-item">
+        <li>
+            <span :class="{completed: todo.completed}" @dblclick="editTodo(todo)">{{ todo.title }}</span>
+            <input type="button" value="标为完成" @click="markAsCompleted(todo)"/>
+            <input type="button" value="取消完成" @click="markNoCompleted(todo)">
+            <input type="button" value="删除" @click="removeTodo(todo)"/>
+            <input type="text" value="编辑 todo..." v-focus="true" v-if="editedTodo!==null && editedTodo.id===todo.id" v-model="todo.title" @keyup.enter="editDone(todo)" @keyup.esc="cancelEdit(todo)"/>
+        </li>
+    </script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.completed{
+    text-decoration: line-through;
+}
+.seleted{
+    color: red;
+}
