@@ -4,42 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ToDo</title>
     <link rel="stylesheet" href="css/style.css">
+    <title>ToDo</title>
 </head>
 <body>
-        <div id="todo-app">
-                <div>
-                  <input type="button" value="全部标为完成" @click="markAllAsCompleted"/>
-                  <input type="text" placeholder="添加 todo" v-model="newTodoTitle" @keyup.enter="addTodo"/>
-                </div>
-                <!-- todo list -->
-                <ul>
-                  <todo-item v-for="todo in filteredTodos" :todo="todo" :key="todo.id" @remove-todo="removeTodo"/>
-                </ul>
-                <!-- end todo list -->
-                <div>
-                  <span>剩余 {{leftTodosCount}} 项未完成 ---</span>
-                  <span>筛选：
-                    <input type="button" class="selected" value="全部" @click="intention='all'"/>
-                    <input type="button" value="进行中" @click="intention='ongoing'"/>
-                    <input type="button" value="已完成" @click="intention='completed'"/>
-                    <input type="button" value="清除已完成" @click="clearCompleted"/>
-                    <input type="button" value="清除全部" @click="clearAll"/>
-                  </span>
-                </div>
-              </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <div id="todo-app">
+        <div>
+            <input type="button" value="全部标为完成" @click="markAllAsCompleted"/>
+            <input type="text" placeholder="添加 todo" v-bind:class="{empty:emptyChecked}" v-model="newTodoTitle" @keyup.enter="addTodo"/>
+            <span v-if="emptyChecked" style="color:red">请输入内容！！</span>
+          </div>
+        <!-- todo list -->
+        <ul>
+            <todo-item v-for="todo in filteredTodos" :todo="todo" :key="todo.id" @remove-todo="removeTodo"/>
+          </ul>
+        <div>
+            <span v-if="leftTodosCount">剩余 {{leftTodosCount}} 项未完成 ---</span>
+            <span v-else-if="completedTodosCount">全部完成，你真是太优秀了！</span>
+            <span v-else>添加我的第一个todo</span>
+            <span v-if="todos.length || recycleBin.length">筛选
+              <input type="button" v-bind:class="{selected:intention==='all'}" value="全部" @click="intention='all'"/>
+              <input type="button" v-if="leftTodosCount" v-bind:class="{selected:intention==='ongoing'}" value="进行中" @click="intention='ongoing'"/>
+              <input type="button" v-if="completedTodosCount" v-bind:class="{selected:intention==='completed'}" value="已完成" @click="intention='completed'"/>
+              <input type="button" v-if="leftTodosCount" value="全部标为完成" @click="markAllAsCompleted"/>
+              <input type="button" v-if="completedTodosCount" value="清除已完成" @click="clearCompleted"/>
+              <input type="button" value="清除全部" @click="clearAll"/>
+              <input v-if="recycleBin.length" type="button" value="回收站" @click="intention='removed'"/>
+              <span v-if="hasRemovedTodo">
+                <input type="button" value="撤销" @click="restoreTodo()">
+              </span>
+            </span>
+          </div>
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script type="text/x-template" id="todo-item">
-        <li>
-            <span :class="{completed: todo.completed}" @dblclick="editTodo(todo)">{{ todo.title }}</span>
-            <input type="button" value="标为完成" @click="markAsCompleted(todo)"/>
-            <input type="button" value="取消完成" @click="markNoCompleted(todo)">
-            <input type="button" value="删除" @click="removeTodo(todo)"/>
-            <input type="text" value="编辑 todo..." v-focus="true" v-if="editedTodo!==null && editedTodo.id===todo.id" v-model="todo.title" @keyup.enter="editDone(todo)" @keyup.esc="cancelEdit(todo)"/>
+        <li :key='todo.id'>
+          <span :class="{completed: todo.completed}" @dblclick="editTodo(todo)">{{ todo.title }}</span>
+          <input type="button" value="标为完成" @click="markAsCompleted(todo)"/>
+          <input type="button" value="标为未完成" @click="markAsUnCompleted">
+          <input v-if="todo.removed" type="button" value="还原" @click="restoreTodo(todo)"/>
+          <input v-else="todo.removed" type="button" value="删除" @click="removeTodo(todo)"/>
+          <input type="text" value="编辑 todo..." v-focus="true" v-if="editedTodo!==null && editedTodo.id===todo.id" v-model="todo.title" @keyup.enter="editDone(todo)" @keyup.esc="cancelEdit(todo)"/>
         </li>
-    </script>
+      </script>
     <script src="js/app.js"></script>
 </body>
 </html>

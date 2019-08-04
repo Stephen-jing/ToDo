@@ -5,6 +5,9 @@
 .completed{
     text-decoration: line-through;
 }
-.seleted{
+.selected{
     color: red;
+}
+.empty{
+    border-color: red;
 }
